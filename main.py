@@ -1,5 +1,6 @@
 import pandas as pd
-from src.config import RAW_DATA_DIR, PROCESSED_DATA_DIR
+from src.bayesian_search import run_bayesian_search
+from src.config import BASE_DIR, RAW_DATA_DIR, PROCESSED_DATA_DIR
 from src.data_processing.target_labeling import mark_critical_alarm, generate_labeled_dataset
 from src.data_processing.data_processing import fill_missing_values, remove_night_period, preprocess_inverter_pipeline, handle_alarmes
 from src.feature_selection import split_spatial_train_test, apply_feature_selection
@@ -35,7 +36,7 @@ def main():
 
     print("Processing Inverter data")
     
-    cols_to_drop = ['Unnamed: 0'] + [f'mppt_voltage_v_{i}' for i in range(2, 13)] + [f'mppt_current_a_{i}' for i in range(2, 13)]
+    cols_to_drop = ['Unnamed: 0'] + [f'mppt_voltage_v_{i}' for i in range(2, 13)] + [f'mppt_current_a_{i}' for i in range(2, 13)] + ['work_state2', 'work_state3', 'tensao_bateria' ]
     
     merged128 = preprocess_inverter_pipeline(inverter128, solar_station, cols_to_drop)
     merged134 = preprocess_inverter_pipeline(inverter134, solar_station, cols_to_drop)
@@ -67,12 +68,7 @@ def main():
 
     
     print("Models training and evaluation")
-    
-    # Carrega os dados processados na etapa anterior
-    train = pd.read_csv(PROCESSED_DATA_DIR / 'train_limpo.csv')
-    test = pd.read_csv(PROCESSED_DATA_DIR / 'test_limpo.csv')
-    
-    # Embaralha apenas o treino
+
     train = shuffle(train, random_state=42).reset_index(drop=True)
     
     target = 'pre_falha_30min'
@@ -84,17 +80,13 @@ def main():
     X_test = test.drop(columns=[col for col in test.columns if 'pre_falha' in col])
     y_test = test[target]
     
-    # Define onde os gráficos do artigo serão salvos
-    pasta_graficos = BASE_DIR / "reports" / "figures"
+
+    graphs = BASE_DIR / "reports" / "figures"
     
-    # Executa a esteira e recebe o relatório
-    relatorio_df = run_training_pipeline(X_train, y_train, X_test, y_test, target_name=target, figures_dir=pasta_graficos)
+    # Training pipeline (model training, evaluation, and report generation)
+    traing_report = run_training_pipeline(X_train, y_train, X_test, y_test, target_name=target, figures_dir=graphs)
     
-    print("\n=== Ranking Final dos Modelos (Ordenado por F1-Score) ===")
-    print(relatorio_df.to_string(index=False))
-    
-    # Salva o relatório em CSV para colocar no artigo depois
-    relatorio_df.to_csv(BASE_DIR / "reports" / f"metricas_{target}.csv", index=False)
+    best_parameters = run_bayesian_search(X_train, y_train, n_trials=50)
 
 
 

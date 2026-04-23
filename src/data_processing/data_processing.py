@@ -83,8 +83,8 @@ def fill_missing_values(df):
 def remove_night_period(df, col_data='datetime', start='05:00', end='18:59'):
     """Removes night period from the dataset"""
     df = df.set_index(col_data)
-    df_filtrado = df.between_time(start, end).reset_index()
-    return df_filtrado
+    df_filtered = df.between_time(start, end).reset_index()
+    return df_filtered
 
 
 def handle_alarmes(df):

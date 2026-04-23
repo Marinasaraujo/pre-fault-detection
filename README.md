@@ -7,3 +7,7 @@ The analytical pipeline evaluates a diverse stack of baseline and ensemble model
 * **Probabilistic:** Naive Bayes
 * **Neural Networks:** Multilayer Perceptron (MLP), Long Short-Term Memory (LSTM)
 * **Tree-Based Ensembles:** Random Forest, Histogram-based Gradient Boosting, XGBoost, LightGBM
+
+## Running process
+* pip install -r requirements.txt
+* python main.py 

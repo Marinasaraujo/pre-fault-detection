@@ -30,6 +30,7 @@ def get_redundant_features(train_df, target_col, threshold=0.95):
 
     # Has to be redundant in both classes
     colunas_definitivas = list(col_remover_0 & col_remover_1)
+    print(colunas_definitivas)
     
     return colunas_definitivas
 
