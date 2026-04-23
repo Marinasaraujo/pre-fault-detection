@@ -1,6 +1,6 @@
 import pandas as pd
 from src.config import RAW_DATA_DIR, PROCESSED_DATA_DIR
-from src.data_processing.target_labeling import mark_critical_alarm, mark_multiple_failures
+from src.data_processing.target_labeling import mark_critical_alarm, generate_labeled_dataset
 from src.data_processing.data_processing import fill_missing_values, remove_night_period, preprocess_inverter_pipeline, handle_alarmes
 from src.feature_selection import split_spatial_train_test, apply_feature_selection
 from sklearn.utils import shuffle

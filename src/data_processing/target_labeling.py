@@ -22,7 +22,7 @@ def mark_critical_alarm(dados_df, alarmes_df, nome_coluna='alarme_critico'):
 
 # New column of ones in the pre-failure window, zeros otherwise
 
-def mark_multiple_failures(dados_df, alarmes_df, janelas=[15], prefixo='pre_falha'):
+def generate_labeled_dataset(dados_df, alarmes_df, janelas=[30], prefixo='pre_falha'):
     """
     janelas: integers list, time windows in minutes to label as pre-failure (e.g., [15, 30, 60])
     """
